@@ -1,4 +1,4 @@
-.PHONY: clean test upgrade quality requirements quality-python
+.PHONY: clean test upgrade quality requirements
 # Generates a help message. Borrowed from https://github.com/pydanny/cookiecutter-djangopackage.
 help: ## display this help message
 	@echo "Please use \`make <target>\` where <target> is one of"
@@ -17,10 +17,8 @@ upgrade: ## update uv.lock with the latest packages satisfying pyproject.toml co
 requirements: ## install development environment requirements
 	uv sync --group dev
 
-quality-python: ## Run python linters
-	pylint src/acid
-
-quality: quality-python ## Run linters
+quality: ## check coding style with pycodestyle and pylint
+	tox -e quality
 
 test-python: clean ## run tests using pytest and generate coverage report
 	pytest

@@ -1,9 +1,9 @@
 """An XBlock checking container/block relationships for correctness."""
 
-import importlib.resources
 import logging
 import random
 
+import importlib.resources
 import webob
 from lazy import lazy
 from mako.lookup import TemplateLookup
@@ -12,12 +12,12 @@ from xblock.fields import Dict, Scope
 
 try:
     from web_fragments.fragment import Fragment
-except Exception:  # pylint: disable=broad-exception-caught  # For backward compatibility with quince and earlier.
-    from xblock.fragment import Fragment  # pylint: disable=ungrouped-imports
+except Exception:
+    from xblock.fragment import Fragment  # For backward compatibility with quince and earlier.
 
 try:
     from xblock.utils.resources import ResourceLoader
-except Exception:  # pylint: disable=broad-exception-caught  # For backward compatibility with quince and earlier.
+except Exception:  # For backward compatibility with quince and earlier.
     from xblockutils.resources import ResourceLoader
 
 
@@ -84,7 +84,6 @@ class AcidSharedMixin:
 
     @lazy
     def template_lookup(self):
-        """Return a TemplateLookup for the acid static directory."""
         return TemplateLookup(
             directories=[importlib.resources.files('acid') / 'static'],
         )
@@ -136,7 +135,7 @@ class AcidSharedMixin:
         }
 
     @XBlock.handler
-    def check_storage(self, request, suffix=''):  # pylint: disable=too-many-return-statements
+    def check_storage(self, request, suffix=''):
         """
         Verifies that scoped storage is working correctly, and that handler_urls
         are generated correctly by both the client- and server-side runtimes.
@@ -159,7 +158,6 @@ class AcidSharedMixin:
 
         if stored_value != query_value:
             return FailureResponse(
-                # pylint: disable-next=consider-using-f-string
                 "Stored value {!r} doesn't match supplied QUERY {!r}".format(
                     stored_value,
                     query_value
@@ -173,7 +171,6 @@ class AcidSharedMixin:
 
         if stored_value != suffix_value:
             return FailureResponse(
-                # pylint: disable-next=consider-using-f-string
                 "Stored value {!r} doesn't match supplied SUFFIX {!r}".format(
                     stored_value,
                     suffix_value
@@ -187,7 +184,6 @@ class AcidSharedMixin:
 
         if stored_value != posted_value:
             return FailureResponse(
-                # pylint: disable-next=consider-using-f-string
                 "Stored value {!r} doesn't match posted VALUE {!r}".format(
                     stored_value,
                     posted_value
@@ -226,7 +222,7 @@ class AcidBlock(XBlock, AcidSharedMixin):
         for scope in scopes:
             try:
                 scope_test_contexts.append(self.setup_storage(scope.name))
-            except Exception:  # pylint: disable=broad-exception-caught
+            except Exception:
                 logging.warning('Unable to use scope in acid test', exc_info=True)
 
         frag = Fragment(self.render_template(
@@ -281,7 +277,7 @@ class AcidAside(XBlockAside, AcidSharedMixin):
         for scope in scopes:
             try:
                 scope_test_contexts.append(self.setup_storage(scope.name))
-            except Exception:  # pylint: disable=broad-exception-caught
+            except Exception:
                 logging.warning('Unable to use scope in acid test', exc_info=True)
 
         frag = Fragment(self.render_template(
@@ -355,7 +351,7 @@ class AcidParentBlock(AcidBlock):
             for rendered_child in rendered_children:
                 frag.add_fragment_resources(rendered_child)
 
-        except:  # noqa: E722  # pylint: disable=bare-except  # deprecated xblock.fragment (quince and earlier)
+        except Exception:  # Deprecated xblock.fragment, for backward compatibility with quince and earlier.
             frag.add_frag_resources(acid_fragment)
             frag.add_frags_resources(rendered_children)
 

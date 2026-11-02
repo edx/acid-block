@@ -119,9 +119,6 @@ conflicts = [
 ]
 
 
-[tool.pylint.format]
-max-line-length = 120
-
 [tool.semantic_release]
 allow_zero_version = true
 major_on_zero = false
