@@ -12,14 +12,13 @@ from xblock.fields import Dict, Scope
 
 try:
     from web_fragments.fragment import Fragment
-except:
+except Exception:
     from xblock.fragment import Fragment  # For backward compatibility with quince and earlier.
 
 try:
     from xblock.utils.resources import ResourceLoader
-except:
+except Exception:  # For backward compatibility with quince and earlier.
     from xblockutils.resources import ResourceLoader
-
 
 
 def generate_fields(cls):
@@ -72,7 +71,8 @@ class AcidSharedMixin:
     UNKNOWN_CLASS = 'fa fa-question-circle fa-lg unknown'
 
     enabled_fields = Dict(
-        help="Dictionary specifying which fields should be enabled for which views. If a view is left out, all fields are enabled",
+        help="Dictionary specifying which fields should be enabled for which views. "
+             "If a view is left out, all fields are enabled",
         scope=Scope.content,
         default={
             'studio_view': ['content', 'settings'],
@@ -262,7 +262,7 @@ class AcidAside(XBlockAside, AcidSharedMixin):
     A testing aside
     """
     @XBlockAside.aside_for('student_view')
-    def aside_view(self, block, context=None):
+    def aside_view(self, block, context=None):  # pylint: disable=unused-argument
         """
         This view is used by the Acid Aside to test various features of
         the runtime it is contained in
@@ -307,7 +307,7 @@ class AcidParentBlock(AcidBlock):
     """
     has_children = True
 
-    def fallback_view(self, view_name, context=None):               # pylint: disable=W0613
+    def fallback_view(self, view_name, context=None):
         """
         This view is used by the Acid XBlock to test various features of
         the runtime it is contained in
@@ -351,7 +351,7 @@ class AcidParentBlock(AcidBlock):
             for rendered_child in rendered_children:
                 frag.add_fragment_resources(rendered_child)
 
-        except:  # Add fragment resources using deprecated xblock.fragment for backward compatibility for quince and earlier releases
+        except Exception:  # Deprecated xblock.fragment, for backward compatibility with quince and earlier.
             frag.add_frag_resources(acid_fragment)
             frag.add_frags_resources(rendered_children)
 
